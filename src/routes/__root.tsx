@@ -1,10 +1,12 @@
-import { Outlet, useRouterState } from '@tanstack/react-router'
+import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BottomNav } from '../components/BottomNav'
 import { Logo } from '../components/Logo'
+import { hasDemoUser } from './authStorage'
 
 export function RootLayout() {
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const pathname = useRouterState({ select: (state) => state.location.pathname })
@@ -15,6 +17,12 @@ export function RootLayout() {
 
     return () => window.clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    if (!isAuthPage && !hasDemoUser()) {
+      navigate({ to: '/login', replace: true })
+    }
+  }, [isAuthPage, navigate, pathname])
 
   return (
     <div className="page-backdrop">

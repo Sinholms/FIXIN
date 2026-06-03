@@ -1299,6 +1299,27 @@ button.order-card:focus-visible,
   line-height: 17px;
 }
 
+.demo-account-note {
+  display: grid;
+  gap: 3px;
+  padding: 12px;
+  border: 1px dashed var(--color-outline);
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  background: var(--color-surface-low);
+}
+
+.demo-account-note strong,
+.demo-account-note span {
+  display: block;
+}
+
+.demo-account-note span {
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 17px;
+}
+
 .auth-field {
   display: grid;
   gap: 7px;

@@ -48,6 +48,12 @@ export function LoginPage() {
           </div>
         </div>
 
+        <div className="demo-account-note">
+          <strong>Akun demo</strong>
+          <span>Email: raka.pratama@email.com</span>
+          <span>Password: fixin123</span>
+        </div>
+
         <label className="auth-field">
           <span>Email</span>
           <div>

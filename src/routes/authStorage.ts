@@ -9,6 +9,10 @@ export function saveDemoUser(user: DemoUser) {
   window.localStorage.setItem(SESSION_KEY, JSON.stringify(user))
 }
 
+export function hasDemoUser() {
+  return Boolean(window.localStorage.getItem(SESSION_KEY))
+}
+
 export function readDemoUser(): DemoUser {
   const raw = window.localStorage.getItem(SESSION_KEY)
 
