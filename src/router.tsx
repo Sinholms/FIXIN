@@ -5,6 +5,8 @@ import { TechnicianDetailPage } from './routes/teknisi.$id'
 import { OrdersPage } from './routes/pesanan'
 import { MessagesPage } from './routes/pesan'
 import { ProfilePage } from './routes/profil'
+import { LoginPage } from './routes/login'
+import { RegisterPage } from './routes/register'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -40,12 +42,26 @@ const profileRoute = createRoute({
   component: ProfilePage,
 })
 
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/login',
+  component: LoginPage,
+})
+
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/register',
+  component: RegisterPage,
+})
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   technicianRoute,
   ordersRoute,
   messagesRoute,
   profileRoute,
+  loginRoute,
+  registerRoute,
 ])
 
 export const router = createRouter({

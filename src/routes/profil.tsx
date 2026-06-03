@@ -1,6 +1,8 @@
+import { useNavigate } from '@tanstack/react-router'
 import { BellRing, ChevronRight, CreditCard, HelpCircle, LogOut, MapPinned, ShieldCheck, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
+import { clearDemoUser, readDemoUser } from './authStorage'
 import { usePageMeta } from './meta'
 
 const menu = [
@@ -12,6 +14,8 @@ const menu = [
 ]
 
 export function ProfilePage() {
+  const navigate = useNavigate()
+  const user = readDemoUser()
   const [selectedMenu, setSelectedMenu] = useState('Data akun')
   const [logoutOpen, setLogoutOpen] = useState(false)
 
@@ -30,8 +34,8 @@ export function ProfilePage() {
             <UserRound size={34} />
           </div>
           <div>
-            <h1>Raka Pratama</h1>
-            <span>raka.pratama@email.com</span>
+            <h1>{user.name}</h1>
+            <span>{user.email}</span>
             <p>
               <ShieldCheck size={15} />
               Akun pelanggan terverifikasi
@@ -89,12 +93,20 @@ export function ProfilePage() {
                 <strong>Keluar dari akun?</strong>
               </div>
             </div>
-            <p className="body-copy">Sesi mock akan tetap tersedia setelah dialog ditutup.</p>
+            <p className="body-copy">Kamu akan kembali ke halaman masuk. Data demo dapat dibuat lagi kapan saja.</p>
             <div className="dialog-actions">
               <button className="secondary-button" type="button" onClick={() => setLogoutOpen(false)}>
                 Batal
               </button>
-              <button className="primary-button" type="button" onClick={() => setLogoutOpen(false)}>
+              <button
+                className="primary-button"
+                type="button"
+                onClick={() => {
+                  clearDemoUser()
+                  setLogoutOpen(false)
+                  navigate({ to: '/login' })
+                }}
+              >
                 Keluar
               </button>
             </div>
