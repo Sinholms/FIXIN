@@ -23,7 +23,7 @@ export function AppHeader({ title, subtitle, showSearch = false, searchValue, on
     <header className="app-header">
       <div className="header-topline">
         <div>
-          <Logo />
+          <Logo variant="light" />
           {title ? <p className="header-title">{title}</p> : null}
           {subtitle ? <p className="header-subtitle">{subtitle}</p> : null}
         </div>

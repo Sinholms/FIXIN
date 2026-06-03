@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Home, MessageCircle, ReceiptText, UserRound } from 'lucide-react'
+import { Home, MessageCircle, ReceiptText, UserRound, X } from 'lucide-react'
+import { Logo } from './Logo'
 
 const navItems = [
   { to: '/', label: 'HOME', icon: Home },
@@ -8,9 +9,20 @@ const navItems = [
   { to: '/profil', label: 'PROFIL', icon: UserRound },
 ] as const
 
-export function BottomNav() {
+type BottomNavProps = {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export function BottomNav({ isOpen = false, onClose }: BottomNavProps) {
   return (
-    <nav className="bottom-nav" aria-label="Navigasi utama">
+    <nav className={isOpen ? 'bottom-nav open' : 'bottom-nav'} aria-label="Navigasi utama">
+      <div className="desktop-sidebar-header">
+        <Logo />
+        <button className="icon-button" type="button" aria-label="Tutup menu" onClick={onClose}>
+          <X size={18} />
+        </button>
+      </div>
       {navItems.map((item) => {
         const Icon = item.icon
         return (
@@ -21,6 +33,7 @@ export function BottomNav() {
             className="tab-item"
             activeProps={{ className: 'tab-item active' }}
             inactiveProps={{ className: 'tab-item' }}
+            onClick={onClose}
           >
             <Icon size={21} strokeWidth={2.3} aria-hidden="true" />
             <span>{item.label}</span>
