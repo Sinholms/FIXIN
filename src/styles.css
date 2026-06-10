@@ -2232,7 +2232,9 @@ button:active,
 }
 
 .sidebar-intro,
-.sidebar-trust {
+.sidebar-trust,
+.sidebar-footer,
+.sidebar-profile {
   display: none;
 }
 
@@ -2987,10 +2989,9 @@ button:active,
     z-index: 9;
     width: min(280px, 86vw);
     height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-auto-rows: min-content;
-    align-content: start;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 6px;
     padding: 0 0 18px;
     border-top: 0;
@@ -3096,7 +3097,7 @@ button:active,
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin: auto 14px 0;
+    margin: 0;
     padding: 13px;
     border: 1px solid #d8e5f7;
     border-radius: 12px;
@@ -3125,6 +3126,70 @@ button:active,
     line-height: 14px;
   }
 
+  .sidebar-footer {
+    display: grid;
+    gap: 10px;
+    margin: auto 14px 0;
+  }
+
+  .sidebar-profile {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 10px;
+    padding: 11px;
+    border: 1px solid rgb(0 37 86 / 10%);
+    border-radius: 12px;
+    color: var(--color-text);
+    background: var(--color-surface);
+    text-decoration: none;
+  }
+
+  .sidebar-profile:hover {
+    border-color: rgb(0 37 86 / 22%);
+    background: var(--color-surface-low);
+  }
+
+  .sidebar-avatar {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--color-on-primary);
+    background: var(--color-primary);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .sidebar-profile-copy,
+  .sidebar-profile-copy strong,
+  .sidebar-profile-copy small {
+    min-width: 0;
+    display: block;
+  }
+
+  .sidebar-profile-copy strong {
+    overflow: hidden;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-profile-copy small {
+    overflow: hidden;
+    margin-top: 2px;
+    color: var(--color-muted);
+    font-size: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-profile > svg {
+    color: var(--color-outline-strong);
+  }
+
   .app-header {
     padding-left: 92px;
     border-bottom-right-radius: 32px;
@@ -3137,6 +3202,10 @@ button:active,
 
   .app-header .header-title {
     margin-top: 20px;
+  }
+
+  .app-header .location-chip {
+    margin-left: max(0px, calc((100% - 1180px) / 2));
   }
 
   .notification-panel {

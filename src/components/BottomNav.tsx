@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { Home, MessageCircle, ReceiptText, ShieldCheck, UserRound, X } from 'lucide-react'
+import { ChevronRight, Home, MessageCircle, ReceiptText, ShieldCheck, UserRound, X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { readDemoUser } from '../routes/authStorage'
 import { Logo } from './Logo'
 
 const navItems = [
@@ -18,6 +19,12 @@ type BottomNavProps = {
 
 export function BottomNav({ isDesktop, isOpen, onClose }: BottomNavProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const user = readDemoUser()
+  const initials = user.name
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
 
   useEffect(() => {
     if (isDesktop && isOpen) {
@@ -71,12 +78,31 @@ export function BottomNav({ isDesktop, isOpen, onClose }: BottomNavProps) {
           </Link>
         )
       })}
-      <div className="sidebar-trust">
-        <ShieldCheck size={21} />
-        <div>
-          <strong>Layanan terlindungi</strong>
-          <span>Harga transparan dan garansi tercatat.</span>
+      <div className="sidebar-footer">
+        <div className="sidebar-trust">
+          <ShieldCheck size={21} />
+          <div>
+            <strong>Layanan terlindungi</strong>
+            <span>Harga transparan dan garansi tercatat.</span>
+          </div>
         </div>
+        <Link
+          className="sidebar-profile"
+          to="/profil"
+          tabIndex={isDesktop && !isOpen ? -1 : undefined}
+          onClick={() => {
+            if (isDesktop) {
+              onClose()
+            }
+          }}
+        >
+          <span className="sidebar-avatar">{initials}</span>
+          <span className="sidebar-profile-copy">
+            <strong>{user.name}</strong>
+            <small>{user.email}</small>
+          </span>
+          <ChevronRight size={18} />
+        </Link>
       </div>
     </nav>
   )
