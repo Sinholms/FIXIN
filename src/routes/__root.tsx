@@ -1,6 +1,7 @@
 import { Outlet, useRouterState } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { AiChatbot } from '../components/AiChatbot'
 import { BottomNav } from '../components/BottomNav'
 
 export function RootLayout() {
@@ -96,11 +97,13 @@ export function RootLayout() {
             >
               <Menu size={21} />
             </button>
-            {isDesktop && sidebarOpen ? (
+            {isDesktop ? (
               <button
-                className="sidebar-scrim"
+                className={sidebarOpen ? 'sidebar-scrim open' : 'sidebar-scrim'}
                 type="button"
                 aria-label="Tutup menu navigasi"
+                aria-hidden={!sidebarOpen}
+                tabIndex={sidebarOpen ? 0 : -1}
                 onClick={() => closeSidebar(true)}
               />
             ) : null}
@@ -109,6 +112,7 @@ export function RootLayout() {
               isOpen={sidebarOpen}
               onClose={() => closeSidebar(true)}
             />
+            <AiChatbot isSuppressed={sidebarOpen} />
           </>
         ) : null}
         <main className="app-scroll">

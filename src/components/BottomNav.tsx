@@ -5,10 +5,10 @@ import { readDemoUser } from '../routes/authStorage'
 import { Logo } from './Logo'
 
 const navItems = [
-  { to: '/', label: 'Beranda', icon: Home },
-  { to: '/pesanan', label: 'Pesanan', icon: ReceiptText },
-  { to: '/pesan', label: 'Pesan', icon: MessageCircle },
-  { to: '/profil', label: 'Profil', icon: UserRound },
+  { to: '/', label: 'Beranda', caption: 'Temukan layanan', icon: Home },
+  { to: '/pesanan', label: 'Pesanan', caption: 'Pantau progres servis', icon: ReceiptText },
+  { to: '/pesan', label: 'Pesan', caption: 'Hubungi teknisi', icon: MessageCircle },
+  { to: '/profil', label: 'Profil', caption: 'Akun dan preferensi', icon: UserRound },
 ] as const
 
 type BottomNavProps = {
@@ -56,28 +56,37 @@ export function BottomNav({ isDesktop, isOpen, onClose }: BottomNavProps) {
         <span>Navigasi</span>
         <strong>Menu utama</strong>
       </div>
-      {navItems.map((item) => {
-        const Icon = item.icon
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            activeOptions={{ exact: item.to === '/' }}
-            className="tab-item"
-            activeProps={{ className: 'tab-item active' }}
-            inactiveProps={{ className: 'tab-item' }}
-            tabIndex={isDesktop && !isOpen ? -1 : undefined}
-            onClick={() => {
-              if (isDesktop) {
-                onClose()
-              }
-            }}
-          >
-            <Icon size={21} strokeWidth={2.3} aria-hidden="true" />
-            <span>{item.label}</span>
-          </Link>
-        )
-      })}
+      <div className="sidebar-nav-list">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              activeOptions={{ exact: item.to === '/' }}
+              className="tab-item"
+              activeProps={{ className: 'tab-item active' }}
+              inactiveProps={{ className: 'tab-item' }}
+              tabIndex={isDesktop && !isOpen ? -1 : undefined}
+              onClick={() => {
+                if (isDesktop) {
+                  onClose()
+                }
+              }}
+            >
+              <span className="tab-active-marker" aria-hidden="true" />
+              <span className="tab-icon">
+                <Icon size={20} strokeWidth={2.3} aria-hidden="true" />
+              </span>
+              <span className="tab-copy">
+                <strong>{item.label}</strong>
+                <small>{item.caption}</small>
+              </span>
+              <ChevronRight className="tab-chevron" size={16} aria-hidden="true" />
+            </Link>
+          )
+        })}
+      </div>
       <div className="sidebar-footer">
         <div className="sidebar-trust">
           <ShieldCheck size={21} />
