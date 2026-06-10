@@ -6,15 +6,17 @@ export type DemoUser = {
 const SESSION_KEY = 'fixin-demo-user'
 
 export function saveDemoUser(user: DemoUser) {
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+  window.localStorage.removeItem(SESSION_KEY)
+  window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(user))
 }
 
 export function hasDemoUser() {
-  return Boolean(window.localStorage.getItem(SESSION_KEY))
+  window.localStorage.removeItem(SESSION_KEY)
+  return Boolean(window.sessionStorage.getItem(SESSION_KEY))
 }
 
 export function readDemoUser(): DemoUser {
-  const raw = window.localStorage.getItem(SESSION_KEY)
+  const raw = window.sessionStorage.getItem(SESSION_KEY)
 
   if (!raw) {
     return {
@@ -35,4 +37,5 @@ export function readDemoUser(): DemoUser {
 
 export function clearDemoUser() {
   window.localStorage.removeItem(SESSION_KEY)
+  window.sessionStorage.removeItem(SESSION_KEY)
 }

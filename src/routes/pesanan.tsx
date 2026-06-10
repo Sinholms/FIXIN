@@ -1,4 +1,5 @@
-import { CalendarDays, ChevronRight, Clock3, ReceiptText, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { CalendarDays, Check, ChevronRight, Clock3, MapPin, MessageCircle, ReceiptText, X } from 'lucide-react'
 import { useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
 import { orders } from '../data/orders'
@@ -21,11 +22,23 @@ export function OrdersPage() {
 
       <section className="content-section">
         <div className="segmented-control" role="tablist" aria-label="Filter pesanan">
-          <button className={tab === 'active' ? 'active' : ''} type="button" onClick={() => setTab('active')}>
-            Aktif
+          <button
+            className={tab === 'active' ? 'active' : ''}
+            type="button"
+            role="tab"
+            aria-selected={tab === 'active'}
+            onClick={() => setTab('active')}
+          >
+            Aktif <span>{orders.filter((order) => order.type === 'active').length}</span>
           </button>
-          <button className={tab === 'history' ? 'active' : ''} type="button" onClick={() => setTab('history')}>
-            Selesai
+          <button
+            className={tab === 'history' ? 'active' : ''}
+            type="button"
+            role="tab"
+            aria-selected={tab === 'history'}
+            onClick={() => setTab('history')}
+          >
+            Selesai <span>{orders.filter((order) => order.type === 'history').length}</span>
           </button>
         </div>
       </section>
@@ -44,7 +57,7 @@ export function OrdersPage() {
               <ChevronRight size={18} />
             </div>
             <div className="order-info">
-              <span>
+              <span className={`status-pill ${order.status === 'Dalam perjalanan' ? 'moving' : order.status === 'Selesai' ? 'done' : ''}`}>
                 <Clock3 size={15} />
                 {order.status}
               </span>
@@ -54,10 +67,10 @@ export function OrdersPage() {
               </span>
             </div>
             <div className="order-footer">
-              <span>{order.technician}</span>
+              <span>Teknisi · {order.technician}</span>
               <strong>{order.total}</strong>
             </div>
-            <p>{order.address}</p>
+            <p><MapPin size={14} /> {order.address}</p>
           </button>
         ))}
       </section>
@@ -92,7 +105,33 @@ export function OrdersPage() {
                 <strong>{selectedOrder.total}</strong>
               </div>
             </div>
-            <p className="body-copy">{selectedOrder.address}</p>
+            <div className="order-progress" aria-label={`Status pesanan: ${selectedOrder.status}`}>
+              {['Pesanan dibuat', 'Teknisi dikonfirmasi', 'Dalam perjalanan', 'Selesai'].map((step, index) => {
+                const currentIndex =
+                  selectedOrder.status === 'Selesai' ? 3 : selectedOrder.status === 'Dalam perjalanan' ? 2 : 1
+                return (
+                  <div className={index <= currentIndex ? 'complete' : ''} key={step}>
+                    <span>{index <= currentIndex ? <Check size={13} /> : index + 1}</span>
+                    <small>{step}</small>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="address-panel"><MapPin size={18} /> {selectedOrder.address}</p>
+            <div className="dialog-actions">
+              <button className="secondary-button" type="button" onClick={() => setSelectedOrder(null)}>
+                Tutup
+              </button>
+              {selectedOrder.type === 'active' ? (
+                <Link className="primary-button" to="/pesan">
+                  <MessageCircle size={17} /> Hubungi teknisi
+                </Link>
+              ) : (
+                <Link className="primary-button" to="/">
+                  Pesan lagi
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       ) : null}

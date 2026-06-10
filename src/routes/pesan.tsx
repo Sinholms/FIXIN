@@ -1,5 +1,5 @@
-import { ArrowLeft, SendHorizontal } from 'lucide-react'
-import { FormEvent, useState } from 'react'
+import { ArrowLeft, CalendarClock, Search, SendHorizontal, ShieldCheck } from 'lucide-react'
+import { FormEvent, useMemo, useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
 import { messages } from '../data/messages'
 import type { ChatPreview } from '../data/messages'
@@ -8,7 +8,16 @@ import { usePageMeta } from './meta'
 export function MessagesPage() {
   const [activeChat, setActiveChat] = useState<ChatPreview | null>(null)
   const [draft, setDraft] = useState('')
+  const [query, setQuery] = useState('')
   const [sentMessages, setSentMessages] = useState<Record<string, ChatPreview['thread']>>({})
+  const filteredMessages = useMemo(() => {
+    const keyword = query.trim().toLowerCase()
+    if (!keyword) return messages
+
+    return messages.filter((chat) =>
+      [chat.technician.name, chat.technician.specialty, chat.lastMessage].join(' ').toLowerCase().includes(keyword),
+    )
+  }, [query])
 
   usePageMeta(
     'Pesan - FIXIN',
@@ -47,6 +56,13 @@ export function MessagesPage() {
         </header>
 
         <section className="message-thread" aria-label="Percakapan">
+          <div className="chat-context-card">
+            <CalendarClock size={19} />
+            <div>
+              <strong>Servis terjadwal hari ini</strong>
+              <span>Andi menuju lokasi · estimasi tiba 18 menit</span>
+            </div>
+          </div>
           {thread.map((message, index) => (
             <div className={`bubble ${message.from}`} key={`${message.time}-${index}`}>
               <p>{message.text}</p>
@@ -55,6 +71,13 @@ export function MessagesPage() {
           ))}
         </section>
 
+        <div className="quick-replies" aria-label="Balasan cepat">
+          {['Baik, saya tunggu', 'Tolong kabari saat tiba', 'Alamat sudah sesuai'].map((reply) => (
+            <button type="button" key={reply} onClick={() => setDraft(reply)}>
+              {reply}
+            </button>
+          ))}
+        </div>
         <form className="chat-composer" onSubmit={handleSubmit}>
           <input
             placeholder="Tulis pesan..."
@@ -74,8 +97,25 @@ export function MessagesPage() {
     <>
       <AppHeader title="Pesan" subtitle="Koordinasi langsung dengan teknisi." />
 
+      <section className="content-section">
+        <label className="in-page-search">
+          <Search size={18} />
+          <input
+            type="search"
+            value={query}
+            placeholder="Cari teknisi atau percakapan"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </label>
+      </section>
+
+      <section className="content-section secure-message">
+        <ShieldCheck size={19} />
+        <span>Chat tersimpan bersama detail pesanan untuk perlindungan pelanggan.</span>
+      </section>
+
       <section className="content-section chat-list" aria-label="Daftar chat">
-        {messages.map((chat) => (
+        {filteredMessages.map((chat) => (
           <button className="chat-row" type="button" key={chat.id} onClick={() => setActiveChat(chat)}>
             <img src={chat.technician.photo} alt={`Foto ${chat.technician.name}`} />
             <div>
@@ -88,6 +128,12 @@ export function MessagesPage() {
             </aside>
           </button>
         ))}
+        {filteredMessages.length === 0 ? (
+          <div className="empty-state">
+            <strong>Percakapan tidak ditemukan</strong>
+            <span>Coba cari dengan nama teknisi atau jenis layanan.</span>
+          </div>
+        ) : null}
       </section>
     </>
   )

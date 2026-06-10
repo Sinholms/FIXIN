@@ -1,5 +1,6 @@
-import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { createRootRoute, createRoute, createRouter, redirect } from '@tanstack/react-router'
 import { RootLayout } from './routes/__root'
+import { hasDemoUser } from './routes/authStorage'
 import { HomePage } from './routes/index'
 import { TechnicianDetailPage } from './routes/teknisi.$id'
 import { OrdersPage } from './routes/pesanan'
@@ -10,6 +11,13 @@ import { RegisterPage } from './routes/register'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
+  beforeLoad: ({ location }) => {
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+
+    if (!isAuthPage && !hasDemoUser()) {
+      throw redirect({ to: '/login', replace: true })
+    }
+  },
 })
 
 const indexRoute = createRoute({

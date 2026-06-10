@@ -1,5 +1,17 @@
 import { useNavigate } from '@tanstack/react-router'
-import { BellRing, ChevronRight, CreditCard, HelpCircle, LogOut, MapPinned, ShieldCheck, UserRound } from 'lucide-react'
+import {
+  BellRing,
+  Check,
+  ChevronRight,
+  CreditCard,
+  HelpCircle,
+  LogOut,
+  Mail,
+  MapPinned,
+  Phone,
+  ShieldCheck,
+  UserRound,
+} from 'lucide-react'
 import { useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
 import { clearDemoUser, readDemoUser } from './authStorage'
@@ -18,11 +30,84 @@ export function ProfilePage() {
   const user = readDemoUser()
   const [selectedMenu, setSelectedMenu] = useState('Data akun')
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [orderNotifications, setOrderNotifications] = useState(true)
+  const [promoNotifications, setPromoNotifications] = useState(false)
 
   usePageMeta(
     'Profil - FIXIN',
     'Kelola akun, alamat, pembayaran, bantuan, dan preferensi pelanggan FIXIN.',
   )
+
+  function renderProfileDetail() {
+    if (selectedMenu === 'Data akun') {
+      return (
+        <>
+          <div className="detail-row"><UserRound size={18} /><span><small>Nama lengkap</small><strong>{user.name}</strong></span></div>
+          <div className="detail-row"><Mail size={18} /><span><small>Email</small><strong>{user.email}</strong></span></div>
+          <div className="detail-row"><Phone size={18} /><span><small>Nomor HP</small><strong>0812 3456 7890</strong></span></div>
+          <button className="secondary-button full-width" type="button">Ubah data akun</button>
+        </>
+      )
+    }
+
+    if (selectedMenu === 'Alamat tersimpan') {
+      return (
+        <>
+          <div className="saved-item selected">
+            <span><Check size={15} /></span>
+            <div><strong>Rumah</strong><small>Jl. Melati No. 18, Jakarta Selatan</small></div>
+          </div>
+          <div className="saved-item">
+            <span>K</span>
+            <div><strong>Kantor</strong><small>Jl. Jenderal Sudirman Kav. 12</small></div>
+          </div>
+          <button className="secondary-button full-width" type="button">Tambah alamat</button>
+        </>
+      )
+    }
+
+    if (selectedMenu === 'Metode pembayaran') {
+      return (
+        <>
+          <div className="saved-item selected">
+            <span><Check size={15} /></span>
+            <div><strong>Bayar setelah servis</strong><small>Tunai atau QRIS kepada teknisi</small></div>
+          </div>
+          <div className="saved-item">
+            <span>••</span>
+            <div><strong>Kartu debit</strong><small>Belum ada kartu tersimpan</small></div>
+          </div>
+          <button className="secondary-button full-width" type="button">Tambah metode pembayaran</button>
+        </>
+      )
+    }
+
+    if (selectedMenu === 'Notifikasi') {
+      return (
+        <>
+          <button className="setting-toggle" type="button" onClick={() => setOrderNotifications((value) => !value)}>
+            <span><strong>Status pesanan</strong><small>Perjalanan, kedatangan, dan garansi</small></span>
+            <b className={orderNotifications ? 'on' : ''} aria-label={orderNotifications ? 'Aktif' : 'Nonaktif'} />
+          </button>
+          <button className="setting-toggle" type="button" onClick={() => setPromoNotifications((value) => !value)}>
+            <span><strong>Promo dan rekomendasi</strong><small>Penawaran layanan yang relevan</small></span>
+            <b className={promoNotifications ? 'on' : ''} aria-label={promoNotifications ? 'Aktif' : 'Nonaktif'} />
+          </button>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <div className="help-card">
+          <HelpCircle size={24} />
+          <div><strong>Butuh bantuan?</strong><small>Tim FIXIN tersedia setiap hari, 07.00–22.00 WIB.</small></div>
+        </div>
+        <button className="primary-button full-width" type="button">Hubungi pusat bantuan</button>
+        <button className="secondary-button full-width" type="button">Lihat pertanyaan umum</button>
+      </>
+    )
+  }
 
   return (
     <>
@@ -31,7 +116,7 @@ export function ProfilePage() {
       <section className="content-section">
         <div className="profile-card">
           <div className="avatar">
-            <UserRound size={34} />
+            {user.name.split(' ').map((part) => part[0]).slice(0, 2).join('')}
           </div>
           <div>
             <h1>{user.name}</h1>
@@ -79,8 +164,11 @@ export function ProfilePage() {
 
       <section className="content-section">
         <div className="profile-detail-panel">
-          <strong>{selectedMenu}</strong>
-          <span>Pengaturan {selectedMenu.toLowerCase()} sedang dipilih. Data ini mock untuk prototype frontend.</span>
+          <div className="profile-detail-heading">
+            <strong>{selectedMenu}</strong>
+            <span>Kelola informasi yang digunakan saat memesan layanan.</span>
+          </div>
+          {renderProfileDetail()}
         </div>
       </section>
 

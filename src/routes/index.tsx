@@ -1,4 +1,4 @@
-import { AirVent, Refrigerator, ShieldCheck, WashingMachine } from 'lucide-react'
+import { AirVent, ArrowRight, CircleCheckBig, Refrigerator, ShieldCheck, Sparkles, WashingMachine } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
 import { CategoryCard } from '../components/CategoryCard'
@@ -41,12 +41,20 @@ export function HomePage() {
   return (
     <>
       <AppHeader
-        title="Butuh bantuan hari ini?"
-        subtitle="Teknisi terverifikasi siap datang ke rumah."
+        title="Apa yang perlu diperbaiki?"
+        subtitle="Pilih kebutuhanmu dan lihat teknisi terbaik di sekitar."
         showSearch
         searchValue={search}
         onSearchChange={setSearch}
       />
+
+      <section className="content-section section-intro">
+        <div>
+          <span className="eyebrow">Layanan populer</span>
+          <h2>Pilih jenis perangkat</h2>
+        </div>
+        <span>Harga diperiksa sebelum pekerjaan dimulai</span>
+      </section>
 
       <section className="content-section category-grid" aria-label="Kategori layanan">
         {categories.map((category) => (
@@ -63,35 +71,55 @@ export function HomePage() {
         <div className="guarantee-banner">
           <ShieldCheck size={27} />
           <div>
-            <span>HARGA TRANSPARAN</span>
-            <strong>JAMINAN GARANSI PERBAIKAN 100%</strong>
+            <span>FIXIN PROTECTION</span>
+            <strong>Harga transparan dan bergaransi</strong>
+            <small>Konfirmasi estimasi biaya sebelum teknisi bekerja.</small>
           </div>
+          <ArrowRight size={20} />
         </div>
       </section>
 
       <section className="content-section">
         <SectionLabel
-          title={selectedCategory ? `TEKNISI ${selectedCategory.toUpperCase()}` : 'TEKNISI TERDEKAT & TERVERIFIKASI'}
-          action="Lihat semua"
+          title={selectedCategory ? `Teknisi ${selectedCategory}` : 'Teknisi rekomendasi'}
+          action={selectedCategory || search ? 'Reset filter' : undefined}
           onAction={() => {
             setSelectedCategory(null)
             setSearch('')
           }}
         />
+        <p className="result-summary">
+          {visibleTechnicians.length} teknisi tersedia
+          {search ? ` untuk "${search}"` : ' di sekitar lokasimu'}
+        </p>
         <div className="horizontal-cards" aria-label="Daftar teknisi">
           {visibleTechnicians.map((technician) => (
             <TechnicianCard key={technician.id} technician={technician} />
           ))}
         </div>
         {visibleTechnicians.length === 0 ? (
-          <p className="empty-state">Tidak ada teknisi yang cocok. Coba kategori atau kata kunci lain.</p>
+          <div className="empty-state">
+            <Sparkles size={24} />
+            <strong>Belum ada hasil yang cocok</strong>
+            <span>Coba kata kunci yang lebih umum atau hapus filter kategori.</span>
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={() => {
+                setSelectedCategory(null)
+                setSearch('')
+              }}
+            >
+              Tampilkan semua teknisi
+            </button>
+          </div>
         ) : null}
       </section>
 
       <section className="content-section trust-strip" aria-label="Keunggulan layanan">
-        <span>Harga Transparan</span>
-        <span>Jaminan Garansi</span>
-        <span>Teknisi Tersertifikasi</span>
+        <span><CircleCheckBig size={16} /> Identitas terverifikasi</span>
+        <span><CircleCheckBig size={16} /> Biaya disetujui di awal</span>
+        <span><CircleCheckBig size={16} /> Garansi tercatat digital</span>
       </section>
     </>
   )

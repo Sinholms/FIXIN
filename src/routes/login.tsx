@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Eye, LockKeyhole, Mail, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { Logo } from '../components/Logo'
 import { saveDemoUser } from './authStorage'
@@ -11,11 +11,13 @@ export function LoginPage() {
   const [password, setPassword] = useState('fixin123')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   usePageMeta('Masuk - FIXIN', 'Masuk ke akun FIXIN untuk memesan teknisi perbaikan rumah.')
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setNotice('')
 
     if (!email.includes('@') || password.trim().length < 6) {
       setError('Masukkan email valid dan password minimal 6 karakter.')
@@ -63,7 +65,10 @@ export function LoginPage() {
               value={email}
               autoComplete="email"
               placeholder="nama@email.com"
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value)
+                setError('')
+              }}
             />
           </div>
         </label>
@@ -77,23 +82,46 @@ export function LoginPage() {
               value={password}
               autoComplete="current-password"
               placeholder="Minimal 6 karakter"
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value)
+                setError('')
+              }}
             />
-            <button className="field-icon-button" type="button" onClick={() => setShowPassword((show) => !show)}>
-              <Eye size={17} />
+            <button
+              className="field-icon-button"
+              type="button"
+              aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              onClick={() => setShowPassword((show) => !show)}
+            >
+              {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
         </label>
 
         {error ? <p className="auth-error">{error}</p> : null}
+        {notice ? <p className="auth-notice">{notice}</p> : null}
+
+        <div className="auth-options">
+          <label><input type="checkbox" defaultChecked /> Ingat saya</label>
+          <button
+            type="button"
+            onClick={() => {
+              setError('')
+              setNotice('Tautan reset demo telah disiapkan. Pada aplikasi produksi, tautan akan dikirim ke emailmu.')
+            }}
+          >
+            Lupa password?
+          </button>
+        </div>
 
         <button className="primary-button full-width" type="submit">
-          MASUK
+          Masuk ke akun
         </button>
 
         <p className="auth-switch">
           Belum punya akun? <Link to="/register">Daftar sekarang</Link>
         </p>
+        <p className="auth-security"><ShieldCheck size={14} /> Data akun dan aktivitas layanan dilindungi FIXIN.</p>
       </form>
     </section>
   )

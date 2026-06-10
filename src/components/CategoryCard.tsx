@@ -11,7 +11,12 @@ type CategoryCardProps = {
 
 export function CategoryCard({ label, caption, icon: Icon, selected = false, onSelect }: CategoryCardProps) {
   return (
-    <button className={selected ? 'category-card selected' : 'category-card'} type="button" onClick={onSelect}>
+    <button
+      className={selected ? 'category-card selected' : 'category-card'}
+      type="button"
+      aria-pressed={selected}
+      onClick={onSelect}
+    >
       <span className="category-icon">
         <Icon size={29} strokeWidth={2.2} />
       </span>

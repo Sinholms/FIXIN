@@ -1,5 +1,15 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { ArrowLeft, BadgeCheck, CalendarClock, MapPin, MessageCircle, ShieldCheck, Star, X } from 'lucide-react'
+import {
+  ArrowLeft,
+  BadgeCheck,
+  CalendarClock,
+  Check,
+  MapPin,
+  MessageCircle,
+  ShieldCheck,
+  Star,
+  X,
+} from 'lucide-react'
 import { useState } from 'react'
 import { getTechnicianById, technicians } from '../data/technicians'
 import { usePageMeta } from './meta'
@@ -9,6 +19,8 @@ export function TechnicianDetailPage() {
   const technician = getTechnicianById(params.id) ?? technicians[0]
   const [bookingOpen, setBookingOpen] = useState(false)
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
+  const [selectedService, setSelectedService] = useState(technician.priceDetails[0].label)
+  const [selectedSchedule, setSelectedSchedule] = useState('Hari ini · 14.00–16.00')
 
   usePageMeta(
     `${technician.name} - Detail Teknisi FIXIN`,
@@ -74,6 +86,7 @@ export function TechnicianDetailPage() {
 
         <section className="content-section">
           <h2 className="compact-title">Estimasi Harga</h2>
+          <p className="section-helper">Pilih layanan saat membuat pesanan. Biaya final selalu dikonfirmasi lebih dulu.</p>
           <div className="price-list">
             {technician.priceDetails.map((item) => (
               <div key={item.label}>
@@ -116,7 +129,7 @@ export function TechnicianDetailPage() {
         <div className="sticky-cta">
           <Link className="secondary-button" to="/pesan">
             <MessageCircle size={18} />
-            Chat
+            Tanya dulu
           </Link>
           <button
             className="primary-button"
@@ -126,7 +139,7 @@ export function TechnicianDetailPage() {
               setBookingOpen(true)
             }}
           >
-            PILIH TEKNISI
+            Pesan teknisi
           </button>
         </div>
       </div>
@@ -145,35 +158,76 @@ export function TechnicianDetailPage() {
             </div>
             {bookingConfirmed ? (
               <div className="success-panel">
-                <ShieldCheck size={28} />
+                <span className="success-icon"><Check size={28} /></span>
                 <strong>Pesanan berhasil dibuat</strong>
-                <span>Teknisi akan menghubungi sebelum berangkat.</span>
+                <span>Nomor pesanan FXN-24072. Teknisi akan menghubungi sebelum berangkat.</span>
+                <div className="booking-summary">
+                  <span>{selectedService}</span>
+                  <span>{selectedSchedule}</span>
+                </div>
               </div>
             ) : (
               <>
-                <div className="info-tile">
-                  <CalendarClock size={22} />
-                  <div>
-                    <strong>Hari ini, {technician.eta}</strong>
-                    <span>Teknisi akan menghubungi sebelum berangkat.</span>
-                  </div>
-                </div>
+                <fieldset className="booking-options">
+                  <legend>Pilih layanan</legend>
+                  {technician.priceDetails.map((service) => (
+                    <label key={service.label} className={selectedService === service.label ? 'option-card selected' : 'option-card'}>
+                      <input
+                        type="radio"
+                        name="service"
+                        value={service.label}
+                        checked={selectedService === service.label}
+                        onChange={() => setSelectedService(service.label)}
+                      />
+                      <span>
+                        <strong>{service.label}</strong>
+                        <small>{service.price}</small>
+                      </span>
+                      <Check size={17} />
+                    </label>
+                  ))}
+                </fieldset>
+                <fieldset className="booking-options">
+                  <legend>Pilih jadwal</legend>
+                  {['Hari ini · 14.00–16.00', 'Hari ini · 18.00–20.00', 'Besok · 09.00–11.00'].map((schedule) => (
+                    <label key={schedule} className={selectedSchedule === schedule ? 'option-card selected' : 'option-card'}>
+                      <input
+                        type="radio"
+                        name="schedule"
+                        value={schedule}
+                        checked={selectedSchedule === schedule}
+                        onChange={() => setSelectedSchedule(schedule)}
+                      />
+                      <CalendarClock size={18} />
+                      <span><strong>{schedule}</strong></span>
+                      <Check size={17} />
+                    </label>
+                  ))}
+                </fieldset>
                 <div className="info-tile">
                   <MapPin size={22} />
                   <div>
                     <strong>Alamat rumah utama</strong>
                     <span>Jl. Melati No. 18, Jakarta Selatan</span>
                   </div>
+                  <button className="text-button" type="button">Ubah</button>
                 </div>
               </>
             )}
-            <button
-              className="primary-button full-width"
-              type="button"
-              onClick={() => (bookingConfirmed ? setBookingOpen(false) : setBookingConfirmed(true))}
-            >
-              {bookingConfirmed ? 'TUTUP' : 'PESAN SEKARANG'}
-            </button>
+            {bookingConfirmed ? (
+              <div className="dialog-actions">
+                <button className="secondary-button" type="button" onClick={() => setBookingOpen(false)}>
+                  Tutup
+                </button>
+                <Link className="primary-button" to="/pesanan">
+                  Lihat pesanan
+                </Link>
+              </div>
+            ) : (
+              <button className="primary-button full-width" type="button" onClick={() => setBookingConfirmed(true)}>
+                Konfirmasi pesanan
+              </button>
+            )}
           </div>
         </div>
       ) : null}

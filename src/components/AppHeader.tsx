@@ -1,4 +1,4 @@
-import { Bell, Search } from 'lucide-react'
+import { Bell, MapPin, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { Logo } from './Logo'
 
@@ -11,9 +11,9 @@ type AppHeaderProps = {
 }
 
 const notifications = [
-  'Teknisi Andi sedang menuju lokasi.',
-  'Garansi servis AC aktif sampai 17 Juni 2026.',
-  'Promo cek kulkas hemat tersedia hari ini.',
+  { title: 'Teknisi sedang menuju lokasi', detail: 'Andi tiba sekitar 18 menit lagi.', time: '2 menit' },
+  { title: 'Garansi servis aktif', detail: 'Servis AC terlindungi sampai 17 Juni 2026.', time: '1 jam' },
+  { title: 'Jadwal besok dikonfirmasi', detail: 'Siti akan datang pukul 09.30.', time: 'Kemarin' },
 ]
 
 export function AppHeader({ title, subtitle, showSearch = false, searchValue, onSearchChange }: AppHeaderProps) {
@@ -30,18 +30,37 @@ export function AppHeader({ title, subtitle, showSearch = false, searchValue, on
         <button
           className="icon-button inverted"
           type="button"
-          aria-label="Notifikasi"
+          aria-label={`${notifications.length} notifikasi`}
           aria-expanded={notificationsOpen}
           onClick={() => setNotificationsOpen((open) => !open)}
         >
           <Bell size={19} />
+          <span className="notification-dot">{notifications.length}</span>
         </button>
       </div>
 
+      <button className="location-chip" type="button" aria-label="Lokasi layanan saat ini">
+        <MapPin size={15} />
+        <span>Rumah · Jakarta Selatan</span>
+      </button>
+
       {notificationsOpen ? (
-        <div className="notification-panel" role="status" aria-label="Daftar notifikasi">
+        <div className="notification-panel" aria-label="Daftar notifikasi">
+          <div className="notification-heading">
+            <strong>Notifikasi</strong>
+            <button type="button" onClick={() => setNotificationsOpen(false)} aria-label="Tutup notifikasi">
+              <X size={16} />
+            </button>
+          </div>
           {notifications.map((item) => (
-            <p key={item}>{item}</p>
+            <div className="notification-item" key={item.title}>
+              <span />
+              <div>
+                <strong>{item.title}</strong>
+                <p>{item.detail}</p>
+              </div>
+              <time>{item.time}</time>
+            </div>
           ))}
         </div>
       ) : null}
@@ -51,10 +70,15 @@ export function AppHeader({ title, subtitle, showSearch = false, searchValue, on
           <Search size={18} aria-hidden="true" />
           <input
             type="search"
-            placeholder="Cari Teknisi AC, Kulkas, Mesin Cuci..."
+            placeholder="Cari layanan atau teknisi"
             value={searchValue ?? ''}
             onChange={(event) => onSearchChange?.(event.target.value)}
           />
+          {searchValue ? (
+            <button type="button" aria-label="Hapus pencarian" onClick={() => onSearchChange?.('')}>
+              <X size={17} />
+            </button>
+          ) : null}
         </label>
       ) : null}
     </header>
