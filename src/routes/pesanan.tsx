@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { CalendarDays, Check, ChevronRight, Clock3, MapPin, MessageCircle, ReceiptText, X } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
+import { useModalDialog } from '../components/useModalDialog'
 import { orders } from '../data/orders'
 import type { Order } from '../data/orders'
 import { usePageMeta } from './meta'
@@ -9,7 +10,10 @@ import { usePageMeta } from './meta'
 export function OrdersPage() {
   const [tab, setTab] = useState<'active' | 'history'>('active')
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
   const filteredOrders = orders.filter((order) => order.type === tab)
+  useModalDialog(Boolean(selectedOrder), () => setSelectedOrder(null), dialogRef, closeButtonRef)
 
   usePageMeta(
     'Pesanan - FIXIN',
@@ -76,14 +80,20 @@ export function OrdersPage() {
       </section>
 
       {selectedOrder ? (
-        <div className="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Detail pesanan">
-          <div className="booking-sheet">
+        <div
+          className="sheet-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedOrder(null)
+          }}
+        >
+          <div ref={dialogRef} className="booking-sheet" role="dialog" aria-modal="true" aria-label="Detail pesanan">
             <div className="sheet-header">
               <div>
                 <span>{selectedOrder.id}</span>
                 <strong>{selectedOrder.service}</strong>
               </div>
-              <button className="icon-button" type="button" aria-label="Tutup" onClick={() => setSelectedOrder(null)}>
+              <button ref={closeButtonRef} className="icon-button" type="button" aria-label="Tutup" onClick={() => setSelectedOrder(null)}>
                 <X size={18} />
               </button>
             </div>

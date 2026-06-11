@@ -60,7 +60,7 @@ export function MessagesPage() {
             <CalendarClock size={19} />
             <div>
               <strong>Servis terjadwal hari ini</strong>
-              <span>Andi menuju lokasi · estimasi tiba 18 menit</span>
+              <span>{activeChat.technician.name} menangani percakapan ini</span>
             </div>
           </div>
           {thread.map((message, index) => (

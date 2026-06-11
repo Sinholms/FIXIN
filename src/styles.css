@@ -1437,6 +1437,163 @@ button.order-card:focus-visible,
   }
 }
 
+/* UI/UX audit corrections */
+.icon-button.inverted {
+  flex: 0 0 42px;
+}
+
+.location-chip {
+  min-height: 40px;
+}
+
+.location-panel {
+  width: min(320px, 100%);
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 12px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  box-shadow: 0 14px 34px rgb(0 20 48 / 22%);
+}
+
+.location-panel > strong {
+  padding: 3px 4px 6px;
+  color: var(--color-primary);
+  font-size: 11px;
+}
+
+.location-panel button {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: var(--color-text);
+  background: transparent;
+  text-align: left;
+}
+
+.location-panel button:hover,
+.location-panel button.selected {
+  border-color: #cfddf0;
+  background: #edf4ff;
+}
+
+.location-panel b,
+.location-panel small {
+  display: block;
+}
+
+.location-panel b {
+  font-size: 11px;
+}
+
+.location-panel small {
+  margin-top: 2px;
+  color: var(--color-muted);
+  font-size: 9px;
+}
+
+.chat-row {
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+}
+
+.chat-row > div {
+  min-width: 0;
+}
+
+.chat-row span {
+  max-width: 100%;
+}
+
+.chat-view {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+}
+
+.sticky-cta {
+  position: static;
+  bottom: auto;
+}
+
+.field-icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+.auth-options button {
+  min-height: 40px;
+  padding-right: 4px;
+  padding-left: 4px;
+}
+
+.auth-options label {
+  min-height: 40px;
+  align-items: center;
+}
+
+.profile-action-notice {
+  margin: 2px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--color-primary);
+  background: #edf4ff;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+@media (min-width: 521px) and (max-width: 899px) {
+  .phone-shell {
+    width: min(100%, 760px);
+  }
+
+  .app-header {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .content-section {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .trust-strip {
+    margin-right: 24px;
+    margin-left: 24px;
+  }
+
+  .auth-hero {
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+
+  .auth-panel {
+    width: min(520px, calc(100% - 48px));
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .detail-hero {
+    height: clamp(340px, 56vw, 440px);
+  }
+
+  .detail-hero img {
+    object-position: center 20%;
+  }
+
+  .order-stack,
+  .chat-list,
+  .menu-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
 /* FIXIN AI assistant */
 .ai-chat-launcher {
   position: fixed;
