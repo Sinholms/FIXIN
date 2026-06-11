@@ -12,8 +12,9 @@ import {
   ShieldCheck,
   UserRound,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AppHeader } from '../components/AppHeader'
+import { useModalDialog } from '../components/useModalDialog'
 import { clearDemoUser, readDemoUser } from './authStorage'
 import { usePageMeta } from './meta'
 
@@ -32,6 +33,10 @@ export function ProfilePage() {
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [orderNotifications, setOrderNotifications] = useState(true)
   const [promoNotifications, setPromoNotifications] = useState(false)
+  const [actionNotice, setActionNotice] = useState('')
+  const logoutDialogRef = useRef<HTMLDivElement>(null)
+  const cancelLogoutRef = useRef<HTMLButtonElement>(null)
+  useModalDialog(logoutOpen, () => setLogoutOpen(false), logoutDialogRef, cancelLogoutRef)
 
   usePageMeta(
     'Profil - FIXIN',
@@ -45,7 +50,7 @@ export function ProfilePage() {
           <div className="detail-row"><UserRound size={18} /><span><small>Nama lengkap</small><strong>{user.name}</strong></span></div>
           <div className="detail-row"><Mail size={18} /><span><small>Email</small><strong>{user.email}</strong></span></div>
           <div className="detail-row"><Phone size={18} /><span><small>Nomor HP</small><strong>0812 3456 7890</strong></span></div>
-          <button className="secondary-button full-width" type="button">Ubah data akun</button>
+          <button className="secondary-button full-width" type="button" onClick={() => setActionNotice('Form perubahan data akun akan tersedia pada versi produksi.')}>Ubah data akun</button>
         </>
       )
     }
@@ -61,7 +66,7 @@ export function ProfilePage() {
             <span>K</span>
             <div><strong>Kantor</strong><small>Jl. Jenderal Sudirman Kav. 12</small></div>
           </div>
-          <button className="secondary-button full-width" type="button">Tambah alamat</button>
+          <button className="secondary-button full-width" type="button" onClick={() => setActionNotice('Alamat baru dapat ditambahkan setelah backend akun diaktifkan.')}>Tambah alamat</button>
         </>
       )
     }
@@ -77,7 +82,7 @@ export function ProfilePage() {
             <span>••</span>
             <div><strong>Kartu debit</strong><small>Belum ada kartu tersimpan</small></div>
           </div>
-          <button className="secondary-button full-width" type="button">Tambah metode pembayaran</button>
+          <button className="secondary-button full-width" type="button" onClick={() => setActionNotice('Metode pembayaran baru akan tersedia pada versi produksi.')}>Tambah metode pembayaran</button>
         </>
       )
     }
@@ -103,8 +108,8 @@ export function ProfilePage() {
           <HelpCircle size={24} />
           <div><strong>Butuh bantuan?</strong><small>Tim FIXIN tersedia setiap hari, 07.00–22.00 WIB.</small></div>
         </div>
-        <button className="primary-button full-width" type="button">Hubungi pusat bantuan</button>
-        <button className="secondary-button full-width" type="button">Lihat pertanyaan umum</button>
+        <button className="primary-button full-width" type="button" onClick={() => setActionNotice('Pusat bantuan demo tersedia setiap hari pukul 07.00-22.00 WIB.')}>Hubungi pusat bantuan</button>
+        <button className="secondary-button full-width" type="button" onClick={() => setActionNotice('FAQ akan dibuka dari pusat bantuan pada versi produksi.')}>Lihat pertanyaan umum</button>
       </>
     )
   }
@@ -137,7 +142,10 @@ export function ProfilePage() {
               className={selectedMenu === item.label ? 'menu-row active' : 'menu-row'}
               type="button"
               key={item.label}
-              onClick={() => setSelectedMenu(item.label)}
+              onClick={() => {
+                setSelectedMenu(item.label)
+                setActionNotice('')
+              }}
             >
               <span className="menu-icon">
                 <Icon size={21} />
@@ -169,12 +177,19 @@ export function ProfilePage() {
             <span>Kelola informasi yang digunakan saat memesan layanan.</span>
           </div>
           {renderProfileDetail()}
+          {actionNotice ? <p className="profile-action-notice" role="status">{actionNotice}</p> : null}
         </div>
       </section>
 
       {logoutOpen ? (
-        <div className="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Konfirmasi keluar">
-          <div className="booking-sheet">
+        <div
+          className="sheet-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setLogoutOpen(false)
+          }}
+        >
+          <div ref={logoutDialogRef} className="booking-sheet" role="dialog" aria-modal="true" aria-label="Konfirmasi keluar">
             <div className="sheet-header">
               <div>
                 <span>Konfirmasi</span>
@@ -183,7 +198,7 @@ export function ProfilePage() {
             </div>
             <p className="body-copy">Kamu akan kembali ke halaman masuk. Data demo dapat dibuat lagi kapan saja.</p>
             <div className="dialog-actions">
-              <button className="secondary-button" type="button" onClick={() => setLogoutOpen(false)}>
+              <button ref={cancelLogoutRef} className="secondary-button" type="button" onClick={() => setLogoutOpen(false)}>
                 Batal
               </button>
               <button

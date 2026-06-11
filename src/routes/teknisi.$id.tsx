@@ -10,7 +10,8 @@ import {
   Star,
   X,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useModalDialog } from '../components/useModalDialog'
 import { getTechnicianById, technicians } from '../data/technicians'
 import { usePageMeta } from './meta'
 
@@ -21,6 +22,13 @@ export function TechnicianDetailPage() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
   const [selectedService, setSelectedService] = useState(technician.priceDetails[0].label)
   const [selectedSchedule, setSelectedSchedule] = useState('Hari ini · 14.00–16.00')
+  const [selectedAddress, setSelectedAddress] = useState({
+    label: 'Alamat rumah utama',
+    detail: 'Jl. Melati No. 18, Jakarta Selatan',
+  })
+  const bookingDialogRef = useRef<HTMLDivElement>(null)
+  const closeBookingRef = useRef<HTMLButtonElement>(null)
+  useModalDialog(bookingOpen, () => setBookingOpen(false), bookingDialogRef, closeBookingRef)
 
   usePageMeta(
     `${technician.name} - Detail Teknisi FIXIN`,
@@ -145,14 +153,20 @@ export function TechnicianDetailPage() {
       </div>
 
       {bookingOpen ? (
-        <div className="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Konfirmasi booking">
-          <div className="booking-sheet">
+        <div
+          className="sheet-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setBookingOpen(false)
+          }}
+        >
+          <div ref={bookingDialogRef} className="booking-sheet" role="dialog" aria-modal="true" aria-label="Konfirmasi booking">
             <div className="sheet-header">
               <div>
                 <span>Konfirmasi Booking</span>
                 <strong>{technician.name}</strong>
               </div>
-              <button className="icon-button" type="button" aria-label="Tutup" onClick={() => setBookingOpen(false)}>
+              <button ref={closeBookingRef} className="icon-button" type="button" aria-label="Tutup" onClick={() => setBookingOpen(false)}>
                 <X size={18} />
               </button>
             </div>
@@ -207,10 +221,20 @@ export function TechnicianDetailPage() {
                 <div className="info-tile">
                   <MapPin size={22} />
                   <div>
-                    <strong>Alamat rumah utama</strong>
-                    <span>Jl. Melati No. 18, Jakarta Selatan</span>
+                    <strong>{selectedAddress.label}</strong>
+                    <span>{selectedAddress.detail}</span>
                   </div>
-                  <button className="text-button" type="button">Ubah</button>
+                  <button
+                    className="text-button"
+                    type="button"
+                    onClick={() => setSelectedAddress((current) =>
+                      current.label === 'Alamat rumah utama'
+                        ? { label: 'Alamat kantor', detail: 'Jl. Jenderal Sudirman Kav. 12, Jakarta Pusat' }
+                        : { label: 'Alamat rumah utama', detail: 'Jl. Melati No. 18, Jakarta Selatan' },
+                    )}
+                  >
+                    Ubah
+                  </button>
                 </div>
               </>
             )}

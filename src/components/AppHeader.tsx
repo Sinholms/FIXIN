@@ -1,5 +1,5 @@
 import { Bell, MapPin, Search, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Logo } from './Logo'
 
 type AppHeaderProps = {
@@ -16,11 +16,43 @@ const notifications = [
   { title: 'Jadwal besok dikonfirmasi', detail: 'Siti akan datang pukul 09.30.', time: 'Kemarin' },
 ]
 
+const savedLocations = [
+  { label: 'Rumah', address: 'Jakarta Selatan' },
+  { label: 'Kantor', address: 'Jakarta Pusat' },
+]
+
 export function AppHeader({ title, subtitle, showSearch = false, searchValue, onSearchChange }: AppHeaderProps) {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState(savedLocations[0])
+  const headerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (!notificationsOpen && !locationOpen) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setNotificationsOpen(false)
+        setLocationOpen(false)
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setNotificationsOpen(false)
+        setLocationOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [locationOpen, notificationsOpen])
 
   return (
-    <header className="app-header">
+    <header ref={headerRef} className="app-header">
       <div className="header-topline">
         <div>
           <Logo variant="light" />
@@ -32,17 +64,53 @@ export function AppHeader({ title, subtitle, showSearch = false, searchValue, on
           type="button"
           aria-label={`${notifications.length} notifikasi`}
           aria-expanded={notificationsOpen}
-          onClick={() => setNotificationsOpen((open) => !open)}
+          onClick={() => {
+            setLocationOpen(false)
+            setNotificationsOpen((open) => !open)
+          }}
         >
           <Bell size={19} />
           <span className="notification-dot">{notifications.length}</span>
         </button>
       </div>
 
-      <button className="location-chip" type="button" aria-label="Lokasi layanan saat ini">
+      <button
+        className="location-chip"
+        type="button"
+        aria-label="Pilih lokasi layanan"
+        aria-expanded={locationOpen}
+        aria-controls="location-options"
+        onClick={() => {
+          setNotificationsOpen(false)
+          setLocationOpen((open) => !open)
+        }}
+      >
         <MapPin size={15} />
-        <span>Rumah · Jakarta Selatan</span>
+        <span>{selectedLocation.label} · {selectedLocation.address}</span>
       </button>
+
+      {locationOpen ? (
+        <div className="location-panel" id="location-options" aria-label="Lokasi tersimpan">
+          <strong>Pilih lokasi layanan</strong>
+          {savedLocations.map((location) => (
+            <button
+              className={selectedLocation.label === location.label ? 'selected' : ''}
+              type="button"
+              key={location.label}
+              onClick={() => {
+                setSelectedLocation(location)
+                setLocationOpen(false)
+              }}
+            >
+              <MapPin size={16} />
+              <span>
+                <b>{location.label}</b>
+                <small>{location.address}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {notificationsOpen ? (
         <div className="notification-panel" aria-label="Daftar notifikasi">
